@@ -40,7 +40,6 @@ public class ResultManager : MonoBehaviour
         score = canvasOldScene.GetComponentInChildren<Score>();
         Destroy(canvasOldScene);
 
-        //canvasOldScene.gameObject.SetActive(false);
         score.transform.SetParent(canvasManager.gameObject.transform);
 
         scoreBest.scoreIndex = score.scoreIndex;

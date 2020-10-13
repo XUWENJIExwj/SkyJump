@@ -25,6 +25,7 @@ public class ObjectCreator : MonoBehaviour
     public int enemyStepMin;
     public int enemyStepChange;
     public int enemyMaxNum;
+    public int enemyEncount;
     public GameObject[] decorationPrefab;
     public Score score;
     public int scoreIndex;
@@ -203,20 +204,23 @@ public class ObjectCreator : MonoBehaviour
     {
         if (step_idx >= enemyStepMin)
         {
-            int enemyMax = Random.Range(0, enemyMaxNum);
+            //int enemyMax = Random.Range(0, enemyMaxNum);
 
-            for (int i = 0; i < enemyMax; i++)
+            for (int i = 0; i < enemyMaxNum; i++)
             {
-                Vector3 enemyPosition = CreateEnemyRandomPosition(obj_idx, step_idx, i);
-
-                int enemyType = 0;
-
-                if (step_idx >= enemyStepChange)
+                if(Random.Range(0,99) < enemyEncount)
                 {
-                    enemyType = 1;
-                }
+                    Vector3 enemyPosition = CreateEnemyRandomPosition(obj_idx, step_idx, i);
 
-                enemyObjs[obj_idx].Add(Instantiate(enemyPrefab[enemyType], enemyPosition, Quaternion.identity));
+                    int enemyType = 0;
+
+                    if (step_idx >= enemyStepChange)
+                    {
+                        enemyType = 1;
+                    }
+
+                    enemyObjs[obj_idx].Add(Instantiate(enemyPrefab[enemyType], enemyPosition, Quaternion.identity));
+                }
             }
         }
     }
@@ -321,11 +325,13 @@ public class ObjectCreator : MonoBehaviour
     {
         float fixedScreenHeight = screenHeight - heightBlank;
         float fixedHalfScreenHeight = fixedScreenHeight / 2;
-        float heightRangeMin = -fixedHalfScreenHeight + screenHeight * step_idx + Random.Range(0.0f, 1.5f);
-        float heightRangeMax = fixedHalfScreenHeight + screenHeight * step_idx + Random.Range(0.0f, 1.5f);
+        float fixedScreenDivided = fixedScreenHeight / heightIndex;
+        float heightRangeMin = -fixedHalfScreenHeight + height_idx * fixedScreenDivided + screenHeight * step_idx;
+        float heightRangeMax = fixedHalfScreenHeight + height_idx * fixedScreenDivided + screenHeight * step_idx;
 
         Vector3 position = new Vector3(Random.Range(-halfScreenWidth, halfScreenWidth), Random.Range(heightRangeMin, heightRangeMax), 0.0f);
 
+        
         if (enemyObjs[obj_idx].Count > 0)
         {
             // 一個前のブロックと縦一直線になる対処

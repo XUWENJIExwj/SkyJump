@@ -74,6 +74,11 @@ public class Trajectory : MonoBehaviour
         dotsParent.SetActive(false);
     }
 
+    public bool GetDotsActive()
+    {
+        return dotsParent.activeSelf;
+    }
+
     public void SetDotsNumber(int n)
     {
         dotsNumber = n;

@@ -42,17 +42,13 @@ public class Flick : MonoBehaviour
 
                 if (Input.GetMouseButtonDown(0))
                 {
-                    isDragging = true;
                     OnDragStart();
                 }
-
-                if (Input.GetMouseButtonUp(0))
+                else if (Input.GetMouseButtonUp(0))
                 {
-                    isDragging = false;
                     OnDragEnd();
                 }
-
-                if (isDragging)
+                else
                 {
                     OnDrag();
                 }
@@ -77,12 +73,13 @@ public class Flick : MonoBehaviour
                     }
                 }
             }
-        }   
+        }
     }
 
     // Drag
     void OnDragStart()
     {
+        isDragging = true;
         objWithFlick.DisactivateRb();
         startPoint = cam.ScreenToWorldPoint(Input.mousePosition);
 
@@ -93,35 +90,54 @@ public class Flick : MonoBehaviour
 
     void OnDrag()
     {
-        endPoint = cam.ScreenToWorldPoint(Input.mousePosition);
-
-        distance = Vector2.Distance(startPoint, endPoint);
-
-        if(distance> distanceMax)
+        if(isDragging)
         {
-            distance = distanceMax;
+            endPoint = cam.ScreenToWorldPoint(Input.mousePosition);
+
+            distance = Vector2.Distance(startPoint, endPoint);
+
+            if (distance > distanceMax)
+            {
+                distance = distanceMax;
+            }
+
+            direction = (startPoint - endPoint).normalized;
+            force = direction * distance * pushForce;
+
+            //just for debug
+            //Debug.DrawLine(startPoint, endPoint);
+
+            objWithFlick.UpdateDirection(direction.x);
+
+            trajectory.UpdateDots(objWithFlick.pos, force);
         }
-
-        direction = (startPoint - endPoint).normalized;
-        force = direction * distance * pushForce;
-
-        //just for debug
-        //Debug.DrawLine(startPoint, endPoint);
-
-        objWithFlick.UpdateDirection(direction.x);
-
-        trajectory.UpdateDots(objWithFlick.pos, force);
     }
 
     void OnDragEnd()
     {
-        //push the object
-        objWithFlick.ActivateRb();
+        if (isDragging)
+        {
+            //push the object
+            objWithFlick.ActivateRb();
 
-        objWithFlick.Push(force);
+            objWithFlick.Push(force);
 
-        objWithFlick.SetPlayerState(ObjectWithFlick.PlayerState.PLAYER_STATE_JUMP_UP);
+            objWithFlick.SetPlayerState(ObjectWithFlick.PlayerState.PLAYER_STATE_JUMP_UP);
 
-        trajectory.Hide();
+            distance = 0.0f;
+
+            trajectory.Hide();
+
+            isDragging = false;
+        }
+    }
+
+    public void ChangeCountinueJump()
+    {
+        if (objWithFlick.playerState == ObjectWithFlick.PlayerState.PLAYER_STATE_TAP &&
+            objWithFlick.oldPlayerState== ObjectWithFlick.PlayerState.PLAYER_STATE_IDLE)
+        {
+            continueJump = !continueJump;
+        }
     }
 }
