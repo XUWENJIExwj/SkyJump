@@ -1,0 +1,127 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Flick : MonoBehaviour
+{
+    Camera cam;
+
+    public ObjectWithFlick objWithFlick;
+    public Trajectory trajectory;
+    public bool continueJump = false;
+
+    AudioManager audioManager;
+
+    [SerializeField] float pushForce = 4f;
+
+    Vector2 startPoint;
+    Vector2 endPoint;
+    Vector2 direction;
+    Vector2 force;
+    public float distance;
+    [SerializeField] [Range(0.0f, 3.0f)] float distanceMax = 0.0f;
+
+    bool isDragging = false;
+
+    // Start is called before the first frame update
+    void Awake()
+    {
+        cam = Camera.main;
+        //objWithFlick.DisactivateRb();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if ((objWithFlick.playerState == ObjectWithFlick.PlayerState.PLAYER_STATE_IDLE ||
+            objWithFlick.playerState == ObjectWithFlick.PlayerState.PLAYER_STATE_TAP ||
+            continueJump) && !objWithFlick.GetGameFlag())
+        {
+            if (Application.isEditor)
+            {
+
+                if (Input.GetMouseButtonDown(0))
+                {
+                    isDragging = true;
+                    OnDragStart();
+                }
+
+                if (Input.GetMouseButtonUp(0))
+                {
+                    isDragging = false;
+                    OnDragEnd();
+                }
+
+                if (isDragging)
+                {
+                    OnDrag();
+                }
+            }
+            else
+            {
+                if (Input.touchCount > 0)
+                {
+                    Touch touch = Input.GetTouch(0);
+
+                    switch (touch.phase)
+                    {
+                        case TouchPhase.Began:
+                            OnDragStart();
+                            break;
+                        case TouchPhase.Moved:
+                            OnDrag();
+                            break;
+                        case TouchPhase.Ended:
+                            OnDragEnd();
+                            break;
+                    }
+                }
+            }
+        }   
+    }
+
+    // Drag
+    void OnDragStart()
+    {
+        objWithFlick.DisactivateRb();
+        startPoint = cam.ScreenToWorldPoint(Input.mousePosition);
+
+        objWithFlick.SetPlayerState(ObjectWithFlick.PlayerState.PLAYER_STATE_TAP);
+
+        trajectory.Show();
+    }
+
+    void OnDrag()
+    {
+        endPoint = cam.ScreenToWorldPoint(Input.mousePosition);
+
+        distance = Vector2.Distance(startPoint, endPoint);
+
+        if(distance> distanceMax)
+        {
+            distance = distanceMax;
+        }
+
+        direction = (startPoint - endPoint).normalized;
+        force = direction * distance * pushForce;
+
+        //just for debug
+        //Debug.DrawLine(startPoint, endPoint);
+
+        objWithFlick.UpdateDirection(direction.x);
+
+        trajectory.UpdateDots(objWithFlick.pos, force);
+    }
+
+    void OnDragEnd()
+    {
+        //push the object
+        objWithFlick.ActivateRb();
+
+        objWithFlick.Push(force);
+
+        objWithFlick.SetPlayerState(ObjectWithFlick.PlayerState.PLAYER_STATE_JUMP_UP);
+
+        trajectory.Hide();
+    }
+}
