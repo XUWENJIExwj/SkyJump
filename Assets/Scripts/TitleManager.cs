@@ -56,7 +56,7 @@ public class TitleManager : MonoBehaviour
     public void OnClickStart()
     {
         Destroy(canvas);
-        audioManager.PlaySE(AudioManager.SE.SE_TITLE);
+        audioManager.PlaySE(AudioManager.SE.SE_TITLE, 0.5f);
         SceneManager.LoadScene("Game");
     }
 

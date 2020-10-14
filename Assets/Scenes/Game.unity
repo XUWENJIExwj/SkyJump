@@ -1434,7 +1434,7 @@ MonoBehaviour:
   enemyStepMin: 1
   enemyStepChange: 3
   enemyMaxNum: 5
-  enemyEncount: 0
+  enemyEncount: 25
   decorationPrefab: []
   score: {fileID: 589460252}
   scoreIndex: 10

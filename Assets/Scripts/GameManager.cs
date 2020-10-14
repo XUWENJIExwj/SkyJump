@@ -40,7 +40,7 @@ public class GameManager : MonoBehaviour
     {
         if(playerObjWithFlick.GetGameFlag())
         {
-            audioManager.PlaySE(AudioManager.SE.SE_GAME);
+            audioManager.PlaySE(AudioManager.SE.SE_GAME_OVER, 0.2f);
             SceneManager.LoadScene("Result");
         }
     }

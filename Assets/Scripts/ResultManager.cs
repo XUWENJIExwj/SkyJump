@@ -70,7 +70,7 @@ public class ResultManager : MonoBehaviour
     public void OnClickStart()
     {
         Destroy(canvasManager.gameObject);
-        audioManager.PlaySE(AudioManager.SE.SE_RESULT);
+        audioManager.PlaySE(AudioManager.SE.SE_RESULT, 0.5f);
         SceneManager.LoadScene("Title");
     }
 
