@@ -7,7 +7,8 @@ public class BlockNormal : MonoBehaviour
     public Rigidbody2D playerRb = null;
     public ObjectWithFlick playerObjWithFlick = null;
     public BoxCollider2D boxCollider;
-    public Score score; 
+    public Score score;
+    public Trajectory trajectory;
 
     private bool hasScore = false;
 
@@ -21,6 +22,17 @@ public class BlockNormal : MonoBehaviour
         if (collision.gameObject.CompareTag("Player") && playerObjWithFlick.playerState == ObjectWithFlick.PlayerState.PLAYER_STATE_JUMP_DOWN)
         {
             playerObjWithFlick.SetIfOnBlock(true);
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player") && playerObjWithFlick.playerState == ObjectWithFlick.PlayerState.PLAYER_STATE_JUMP_DOWN)
+        {
+            playerObjWithFlick.SetIfOnBlock(true);
+            playerObjWithFlick.SetPlayerState(ObjectWithFlick.PlayerState.PLAYER_STATE_IDLE);
+            playerRb.velocity = Vector3.zero;
+            playerRb.angularVelocity = 0f;
         }
     }
 
@@ -61,5 +73,10 @@ public class BlockNormal : MonoBehaviour
                 boxCollider.size.y / 2 * transform.localScale.y // blockの中心から最高点の位置
                 );
         }
+    }
+
+    public Trajectory GetTrajectory()
+    {
+        return trajectory;
     }
 }

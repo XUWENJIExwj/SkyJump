@@ -15,6 +15,7 @@ public class Decoration : MonoBehaviour
 
     public GameObject decorationPrefab;
     public GameObject[] decorations;
+    public DecorationMovement[] decorationMovement;
 
     // Start is called before the first frame update
     void Awake()
@@ -32,6 +33,7 @@ public class Decoration : MonoBehaviour
 
         decorations = new GameObject[3];
         spriteRenderers = new SpriteRenderer[decorations.Length];
+        decorationMovement = new DecorationMovement[decorations.Length];
 
         for (int i = 0; i < decorations.Length; i++)
         {

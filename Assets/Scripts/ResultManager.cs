@@ -44,7 +44,7 @@ public class ResultManager : MonoBehaviour
 
         scoreBest.scoreIndex = score.scoreIndex;
 
-        canvasManager.SetScorePosition(-40.0f, 680.0f);
+        canvasManager.SetScorePosition(-40.0f, 580.0f);
         canvasManager.SetScoreSize(0.65f, 0.65f);
 
         int score_work = LoadScore();
@@ -59,7 +59,7 @@ public class ResultManager : MonoBehaviour
             scoreBest.SetScore((float)score_work / score.scoreIndex);
         }
 
-        canvasManager.SetScoreBestPosition(45.0f, 520.0f);
+        canvasManager.SetScoreBestPosition(45.0f, 420.0f);
         canvasManager.SetScoreBestSize(0.48f, 0.48f);
 
         // BGMの再生

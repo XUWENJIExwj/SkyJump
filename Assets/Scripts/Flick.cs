@@ -80,7 +80,7 @@ public class Flick : MonoBehaviour
     void OnDragStart()
     {
         isDragging = true;
-        objWithFlick.DisactivateRb();
+        objWithFlick.DisactivateRb(continueJump);
         startPoint = cam.ScreenToWorldPoint(Input.mousePosition);
 
         objWithFlick.SetPlayerState(ObjectWithFlick.PlayerState.PLAYER_STATE_TAP);
@@ -129,15 +129,6 @@ public class Flick : MonoBehaviour
             trajectory.Hide();
 
             isDragging = false;
-        }
-    }
-
-    public void ChangeCountinueJump()
-    {
-        if (objWithFlick.playerState == ObjectWithFlick.PlayerState.PLAYER_STATE_TAP &&
-            objWithFlick.oldPlayerState== ObjectWithFlick.PlayerState.PLAYER_STATE_IDLE)
-        {
-            continueJump = !continueJump;
         }
     }
 }

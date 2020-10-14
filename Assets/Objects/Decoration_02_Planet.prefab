@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2142493925092545110}
   - component: {fileID: 6906907849455015862}
-  - component: {fileID: 9165440800492769802}
+  - component: {fileID: 5438243009905524962}
   m_Layer: 0
   m_Name: Decoration_02_Planet
   m_TagString: Untagged
@@ -75,14 +75,14 @@ SpriteRenderer:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
-  m_DrawMode: 0
+  m_DrawMode: 1
   m_Size: {x: 10, y: 10}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &9165440800492769802
+--- !u!114 &5438243009905524962
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -91,12 +91,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 2940190935617387816}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9c9cfc9d1ec0b874bacc05fdc38d92f8, type: 3}
+  m_Script: {fileID: 11500000, guid: e460359c083a45849be60cee93634813, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sprites:
-  - {fileID: 21300000, guid: 1db13c4db19f0404998703c94defb331, type: 3}
-  - {fileID: 21300000, guid: 9763a3548973e2945a85626d88313301, type: 3}
-  - {fileID: 21300000, guid: d3c10672f49a5c945af07cfd0b230301, type: 3}
-  - {fileID: 21300000, guid: f08c9ea8c4fa6ed49b51e1ca7a8e71e9, type: 3}
-  - {fileID: 21300000, guid: 29d5cccfef63c7042a83a7c97651ac79, type: 3}

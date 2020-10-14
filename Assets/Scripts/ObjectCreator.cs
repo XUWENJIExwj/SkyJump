@@ -22,6 +22,8 @@ public class ObjectCreator : MonoBehaviour
     private List<GameObject>[] blockObjs;
     public GameObject[] enemyPrefab;
     private List<GameObject>[] enemyObjs;
+    public GameObject linePrefab;
+    public List<GameObject>[] lineObjs;
     public int enemyStepMin;
     public int enemyStepChange;
     public int enemyMaxNum;
@@ -42,6 +44,8 @@ public class ObjectCreator : MonoBehaviour
     public int stepDotsIndex;
 
     public AudioManager audioManager;
+
+    private int oldLineIndex;
 
     bool bgInNextStep;
 
@@ -87,6 +91,14 @@ public class ObjectCreator : MonoBehaviour
             enemyObjs[i] = new List<GameObject>();
         }
 
+        // Lineの初期化
+        lineObjs = new List<GameObject>[2];
+
+        for (int i = 0; i < blockObjs.Length; i++)
+        {
+            lineObjs[i] = new List<GameObject>();
+        }
+
         step = 0;
 
         // Player初期位置の設定
@@ -94,7 +106,7 @@ public class ObjectCreator : MonoBehaviour
 
         playerRectTransform.position = new Vector3(
             0.0f,
-            -halfScreenHeight + playerRectTransform.sizeDelta.y / 2 * playerRectTransform.localScale.y + 1.3f,
+            -halfScreenHeight + playerRectTransform.sizeDelta.y / 2 * playerRectTransform.localScale.y + 1.1f,
             //plane.transform.position.y + plane.transform.localScale.y / 2 + playerRectTransform.sizeDelta.y / 2 * playerRectTransform.localScale.y,
             - 1.0f);
 
@@ -117,6 +129,9 @@ public class ObjectCreator : MonoBehaviour
 
         blockObjs[0][0].SetActive(false);
 
+        lineObjs[0].Add(Instantiate(linePrefab, new Vector3(0.0f, -halfScreenHeight + 10.0f, -0.2f), Quaternion.identity));
+        lineObjs[0][0].GetComponent<Line>().SetText(10 * scoreIndex);
+        oldLineIndex = 0;
 
         dotsNumber = dotsNumberMax;
         trajectory.SetDotsNumber(dotsNumberMax);
@@ -148,6 +163,7 @@ public class ObjectCreator : MonoBehaviour
             //DestroyBlock(index);
             DestroyGameObjectsInList(blockObjs[index]);
             DestroyGameObjectsInList(enemyObjs[index]);
+            DestroyGameObjectsInList(lineObjs[index]);
 
             CreateBG(index, step + 1);
 
@@ -180,6 +196,7 @@ public class ObjectCreator : MonoBehaviour
 
         CreateBlock(obj_idx, step_idx);
         CreateEnemy(obj_idx, step_idx);
+        CreateLine(obj_idx,step_idx);
     }
 
     void CreateBlock(int obj_idx, int step_idx)
@@ -197,6 +214,7 @@ public class ObjectCreator : MonoBehaviour
             blockScript.playerRb = playerRb;
             blockScript.playerObjWithFlick = playerObjWithFlick;
             blockScript.score = score;
+            blockScript.trajectory = trajectory;
         }
     }
 
@@ -204,11 +222,11 @@ public class ObjectCreator : MonoBehaviour
     {
         if (step_idx >= enemyStepMin)
         {
-            //int enemyMax = Random.Range(0, enemyMaxNum);
+            int encount = enemyEncount;
 
             for (int i = 0; i < enemyMaxNum; i++)
             {
-                if(Random.Range(0,99) < enemyEncount)
+                if(Random.Range(0,99) < encount)
                 {
                     Vector3 enemyPosition = CreateEnemyRandomPosition(obj_idx, step_idx, i);
 
@@ -220,8 +238,28 @@ public class ObjectCreator : MonoBehaviour
                     }
 
                     enemyObjs[obj_idx].Add(Instantiate(enemyPrefab[enemyType], enemyPosition, Quaternion.identity));
+
+                    encount = enemyEncount;
+                }
+                else
+                {
+                    encount += enemyEncount;
                 }
             }
+        }
+    }
+
+    void CreateLine(int obj_idx, int step_idx)
+    {
+        int line_idx = (int)(step_idx * screenHeight + screenHeight) / 50;
+
+        if (lineObjs[obj_idx].Count == 0 && line_idx != oldLineIndex)
+        {
+            Vector3 linePosition = new Vector3(0.0f, -halfScreenHeight + line_idx * 50, -0.2f);
+
+            lineObjs[obj_idx].Add(Instantiate(linePrefab, linePosition, Quaternion.identity));
+            lineObjs[obj_idx][0].GetComponent<Line>().SetText(50 * line_idx * scoreIndex);
+            oldLineIndex++;
         }
     }
 
@@ -253,10 +291,11 @@ public class ObjectCreator : MonoBehaviour
         float fixedScreenDivided = fixedScreenHeight / heightIndex;
         float heightRangeMin = -fixedHalfScreenHeight + height_idx * fixedScreenDivided + screenHeight * step_idx;
         float heightRangeMax = heightRangeMin + fixedScreenDivided / 2;
+
         bool width = true;
         bool height = true;
 
-        Vector3 position = new Vector3(Random.Range(-halfScreenWidth, halfScreenWidth), Random.Range(heightRangeMin, heightRangeMax), 0.0f);
+        Vector3 position = new Vector3(Random.Range(-halfScreenWidth, halfScreenWidth), Random.Range(heightRangeMin, heightRangeMax), -1.0f);
 
         if (blockObjs[obj_idx].Count > 0)
         {
@@ -325,17 +364,16 @@ public class ObjectCreator : MonoBehaviour
     {
         float fixedScreenHeight = screenHeight - heightBlank;
         float fixedHalfScreenHeight = fixedScreenHeight / 2;
-        float fixedScreenDivided = fixedScreenHeight / heightIndex;
+        float fixedScreenDivided = fixedScreenHeight / enemyMaxNum;
         float heightRangeMin = -fixedHalfScreenHeight + height_idx * fixedScreenDivided + screenHeight * step_idx;
-        float heightRangeMax = fixedHalfScreenHeight + height_idx * fixedScreenDivided + screenHeight * step_idx;
+        float heightRangeMax = heightRangeMin + fixedScreenDivided * 0.75f;
 
         Vector3 position = new Vector3(Random.Range(-halfScreenWidth, halfScreenWidth), Random.Range(heightRangeMin, heightRangeMax), 0.0f);
 
-        
         if (enemyObjs[obj_idx].Count > 0)
         {
             // 一個前のブロックと縦一直線になる対処
-            if (Mathf.Abs(enemyObjs[obj_idx][enemyObjs[obj_idx].Count - 1].transform.position.y - position.y) <= 1.5f)
+            if (Mathf.Abs(enemyObjs[obj_idx][enemyObjs[obj_idx].Count - 1].transform.position.y - position.y) <= 3.0f)
             {
                 position = CreateEnemyRandomPosition(obj_idx, step_idx, height_idx);
             }
@@ -345,7 +383,7 @@ public class ObjectCreator : MonoBehaviour
             if (step_idx > enemyStepMin && enemyObjs[(obj_idx + 1) % 2].Count > 0)
             {
                 // 一個前のブロックと縦一直線になる対処
-                if (Mathf.Abs(enemyObjs[(obj_idx + 1) % 2][enemyObjs[(obj_idx + 1) % 2].Count - 1].transform.position.y - position.y) <= 1.5f)
+                if (Mathf.Abs(enemyObjs[(obj_idx + 1) % 2][enemyObjs[(obj_idx + 1) % 2].Count - 1].transform.position.y - position.y) <= 3.0f)
                 {
                     position = CreateEnemyRandomPosition(obj_idx, step_idx, height_idx);
                 }

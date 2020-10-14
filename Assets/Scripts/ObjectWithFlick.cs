@@ -114,13 +114,18 @@ public class ObjectWithFlick : MonoBehaviour
         playerRb.isKinematic = false;
     }
 
-    public void DisactivateRb()
+    public void DisactivateRb(bool continue_jump)
     {
-        playerRb.velocity = Vector3.zero;
-        playerRb.angularVelocity = 0f;
-        playerRb.isKinematic = true;
-
-        //playerRb.velocity = new Vector2(playerRb.velocity.x, 0.0f);
+        if(continue_jump)
+        {
+            playerRb.velocity = Vector3.zero;
+            playerRb.angularVelocity = 0f;
+            playerRb.isKinematic = true;
+        }
+        else
+        {
+            playerRb.velocity = new Vector2(playerRb.velocity.x, 0.0f);
+        }
     }
 
     public void SetPlayerState(PlayerState player_state)

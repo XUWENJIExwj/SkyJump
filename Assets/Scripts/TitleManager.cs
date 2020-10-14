@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.IO;
+using UnityEngine.UI;
 
 public class TitleManager : MonoBehaviour
 {
@@ -15,6 +16,8 @@ public class TitleManager : MonoBehaviour
     public AudioManager audioManager;
 
     public GameObject canvas;
+    public Text scoreBest;
+    public GameObject best;
 
     // Start is called before the first frame update
     void Start()
@@ -35,7 +38,19 @@ public class TitleManager : MonoBehaviour
         // BGMの再生
         audioManager.PlayBGM(AudioManager.BGM.BGM_TITLE);
 
-        CreateScoreFile();
+        //CreateScoreFile();
+
+        if (LoadScore() != 0)
+        {
+            best.SetActive(true);
+            scoreBest.gameObject.SetActive(true);
+            scoreBest.text = "Best Score : " + LoadScore().ToString() + " m";
+        }
+        else
+        {
+            best.SetActive(false);
+            scoreBest.gameObject.SetActive(false);
+        }
     }
 
     public void OnClickStart()
@@ -45,7 +60,35 @@ public class TitleManager : MonoBehaviour
         SceneManager.LoadScene("Game");
     }
 
-    public void CreateScoreFile()
+//    public void CreateScoreFile()
+//    {
+//        string path;
+//        string filename = "/score.txt";
+
+//        if (Application.isEditor)
+//        {
+//            path = Application.dataPath + filename;
+//        }
+//        else
+//        {
+//#if UNITY_IOS
+
+//#elif UNITY_ANDROID
+
+//            path = Application.persistentDataPath + filename;
+//#endif
+//        }
+
+//        if (!File.Exists(path))
+//        {
+//            StreamWriter sw = new StreamWriter(path, false); //true=追記 false=上書き
+//            sw.WriteLine(5000.ToString());
+//            sw.Flush();
+//            sw.Close();
+//        }
+//    }
+
+    public int LoadScore()
     {
         string path;
         string filename = "/score.txt";
@@ -64,12 +107,16 @@ public class TitleManager : MonoBehaviour
 #endif
         }
 
-        if (!File.Exists(path))
+        if (File.Exists(path))
         {
-            StreamWriter sw = new StreamWriter(path, false); //true=追記 false=上書き
-            sw.WriteLine(5000.ToString());
-            sw.Flush();
-            sw.Close();
+            StreamReader sr = new StreamReader(path);
+            int s = int.Parse(sr.ReadLine());
+            sr.Close();
+            return s;
+        }
+        else
+        {
+            return 0;
         }
     }
 }
