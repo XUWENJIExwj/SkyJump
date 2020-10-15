@@ -18,7 +18,13 @@ public class ResultManager : MonoBehaviour
     public CanvasManager canvasManager;
     public Score score;
     public Score scoreBest;
+    public Score scoreOther;
     public GameObject scoreFrame;
+    public GameObject lightObj;
+    public float lightSize;
+    public bool hasCreatedSoul;
+    public GameObject player;
+    public GameObject soulPrefab;
 
     // Start is called before the first frame update
     void Start()
@@ -29,6 +35,8 @@ public class ResultManager : MonoBehaviour
         resultSpriteRenderer = GetComponent<SpriteRenderer>();
         resultSpriteRenderer.size = new Vector2(6.4f * screenHeight / 11.36f, screenHeight);
 
+        RectTransform frame = scoreFrame.GetComponent<RectTransform>();
+
         // AudioManagerへのアタッチ
         if (!GameObject.Find("AudioManager"))
         {
@@ -36,15 +44,26 @@ public class ResultManager : MonoBehaviour
         }
         audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
 
-        canvasOldScene = GameObject.Find("Canvas");
-        score = canvasOldScene.GetComponentInChildren<Score>();
-        Destroy(canvasOldScene);
+        if(canvasOldScene = GameObject.Find("Canvas"))
+        {
+            //canvasOldScene = GameObject.Find("Canvas");
+
+            score = canvasOldScene.GetComponentInChildren<Score>();
+            Destroy(canvasOldScene);
+        }
+        else
+        {
+            scoreOther.gameObject.SetActive(true);
+            score = scoreOther;
+            score.tag = "Score";
+            score.score = 100;
+        }
 
         score.transform.SetParent(canvasManager.gameObject.transform);
 
         scoreBest.scoreIndex = score.scoreIndex;
 
-        canvasManager.SetScorePosition(-40.0f, 580.0f);
+        canvasManager.SetScorePosition(-40.0f, frame.anchoredPosition.y - 15.0f);
         canvasManager.SetScoreSize(0.65f, 0.65f);
 
         int score_work = LoadScore();
@@ -59,11 +78,23 @@ public class ResultManager : MonoBehaviour
             scoreBest.SetScore((float)score_work / score.scoreIndex);
         }
 
-        canvasManager.SetScoreBestPosition(45.0f, 420.0f);
+        canvasManager.SetScoreBestPosition(45.0f, frame.anchoredPosition.y - 175.0f);
         canvasManager.SetScoreBestSize(0.48f, 0.48f);
 
         // BGMの再生
         audioManager.PlayBGM(AudioManager.BGM.BGM_RESULT);
+
+        hasCreatedSoul = false;
+    }
+
+    private void FixedUpdate()
+    {
+        SetLightSize();
+
+        if (lightObj.transform.localScale.x >= 1.0f && !hasCreatedSoul)
+        {
+            CreateSoul();
+        }
     }
 
     // Update is called once per frame
@@ -129,5 +160,20 @@ public class ResultManager : MonoBehaviour
         sw.WriteLine(s);
         sw.Flush();
         sw.Close();
+    }
+
+    public void SetLightSize()
+    {
+        if (lightObj.transform.localScale.x < 1.0f && Time.fixedTime >= 0.3f)
+        {
+            lightObj.transform.localScale = new Vector3(lightObj.transform.localScale.x + lightSize, lightObj.transform.localScale.y, lightObj.transform.localScale.z);
+        }
+    }
+
+    public void CreateSoul()
+    {
+        hasCreatedSoul = true;
+        Vector3 pos = new Vector3(-0.6f, -3.1f, -2.0f);
+        Instantiate(soulPrefab, pos, Quaternion.identity);
     }
 }

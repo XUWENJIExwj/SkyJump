@@ -26,7 +26,7 @@ public class SpriteAnimation : MonoBehaviour
 
     public void PlayerJump()
     {
-        int index = (int)(Time.time * framesPerSec) % 2 + 2;
+        int index = (int)(Time.fixedTime * framesPerSec) % 2 + 2;
         spriteRender.sprite = sprites[index];
     }
 
