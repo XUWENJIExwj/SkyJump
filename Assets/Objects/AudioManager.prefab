@@ -53,4 +53,4 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 98d36c08add481a4eab428f52789ab01, type: 3}
   - {fileID: 8300000, guid: 658d4337d086bc645903504d5ba244aa, type: 3}
   - {fileID: 8300000, guid: 883c7d25ed5865a45838a59a0bf95731, type: 3}
-  audioSourceNum: 2
+  audioSourceNum: 3

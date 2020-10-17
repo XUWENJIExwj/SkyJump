@@ -8,7 +8,8 @@ public class BlockIce : BlockNormal
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Player") && playerObjWithFlick.playerState == ObjectWithFlick.PlayerState.PLAYER_STATE_JUMP_DOWN)
+        if (collision.gameObject.CompareTag("Player") && (playerObjWithFlick.playerState == ObjectWithFlick.PlayerState.PLAYER_STATE_JUMP_DOWN ||
+            (playerObjWithFlick.playerState == ObjectWithFlick.PlayerState.PLAYER_STATE_JUMP_UP && playerObjWithFlick.oldPlayerState == ObjectWithFlick.PlayerState.PLAYER_STATE_TAP)))
         {
             playerObjWithFlick.SetIfOnBlock(true);
             playerObjWithFlick.SetPlayerState(ObjectWithFlick.PlayerState.PLAYER_STATE_IDLE);

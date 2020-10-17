@@ -18,6 +18,11 @@ public class TitleManager : MonoBehaviour
     public GameObject canvas;
     public Text scoreBest;
     public GameObject best;
+    public TitleFade fade;
+
+    public GameObject particle;
+
+    private string nextScene;
 
     // Start is called before the first frame update
     void Start()
@@ -51,42 +56,77 @@ public class TitleManager : MonoBehaviour
             best.SetActive(false);
             scoreBest.gameObject.SetActive(false);
         }
+
+        fade.SetFadeState(Fade.FadeState.FADE_STATE_IN);
     }
 
-    public void OnClickStart()
+    private void FixedUpdate()
     {
-        Destroy(canvas);
-        audioManager.PlaySE(AudioManager.SE.SE_TITLE, 0.5f);
-        SceneManager.LoadScene("Game");
+        switch(fade.GetFadeState())
+        {
+            case Fade.FadeState.FADE_STATE_IN:
+                fade.FadeIn();
+                break;
+            case Fade.FadeState.FADE_STATE_OUT:
+                fade.FadeOut();
+                break;
+            case Fade.FadeState.FADE_STATE_NEXT_SCENE:
+                Destroy(canvas);
+                Destroy(particle);
+                SceneManager.LoadScene(nextScene);
+                break;
+            default:
+                break;
+        }
     }
 
-//    public void CreateScoreFile()
-//    {
-//        string path;
-//        string filename = "/score.txt";
+    public void GoToGameScene()
+    {
+        if (fade.GetFadeState() == Fade.FadeState.FADE_STATE_NONE)
+        {
+            nextScene = "Game";
+            fade.SetFadeState(Fade.FadeState.FADE_STATE_OUT);
+            audioManager.PlaySE(AudioManager.SE.SE_TITLE, 1, 0.5f);
+        }
+    }
 
-//        if (Application.isEditor)
-//        {
-//            path = Application.dataPath + filename;
-//        }
-//        else
-//        {
-//#if UNITY_IOS
+    public void GoToRankScene()
+    {
+        if (fade.GetFadeState() == Fade.FadeState.FADE_STATE_NONE)
+        {
+            nextScene = "Rank";
+            fade.SetFadeState(Fade.FadeState.FADE_STATE_OUT);
+            audioManager.PlaySE(AudioManager.SE.SE_TITLE, 1, 0.5f);
+        }
+    }
 
-//#elif UNITY_ANDROID
+    //    public void CreateScoreFile()
+    //    {
+    //        string path;
+    //        string filename = "/score.txt";
 
-//            path = Application.persistentDataPath + filename;
-//#endif
-//        }
+    //        if (Application.isEditor)
+    //        {
+    //            path = Application.dataPath + filename;
+    //        }
+    //        else
+    //        {
+    //#if UNITY_IOS
 
-//        if (!File.Exists(path))
-//        {
-//            StreamWriter sw = new StreamWriter(path, false); //true=追記 false=上書き
-//            sw.WriteLine(5000.ToString());
-//            sw.Flush();
-//            sw.Close();
-//        }
-//    }
+    //#elif UNITY_ANDROID
+
+    //            path = Application.persistentDataPath + filename;
+    //#endif
+    //        }
+
+    //        if (!File.Exists(path))
+    //        {
+    //            StreamWriter sw = new StreamWriter(path, false); //true=追記 false=上書き
+    //            sw.WriteLine(5000.ToString());
+    //            sw.Flush();
+    //            sw.Close();
+    //        }
+    //    }
 
     public int LoadScore()
     {

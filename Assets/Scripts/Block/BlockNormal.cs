@@ -27,7 +27,8 @@ public class BlockNormal : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Player") && playerObjWithFlick.playerState == ObjectWithFlick.PlayerState.PLAYER_STATE_JUMP_DOWN)
+        if (collision.gameObject.CompareTag("Player") && (playerObjWithFlick.playerState == ObjectWithFlick.PlayerState.PLAYER_STATE_JUMP_DOWN ||
+            (playerObjWithFlick.playerState == ObjectWithFlick.PlayerState.PLAYER_STATE_JUMP_UP && playerObjWithFlick.oldPlayerState == ObjectWithFlick.PlayerState.PLAYER_STATE_TAP)))
         {
             playerObjWithFlick.SetIfOnBlock(true);
             playerObjWithFlick.SetPlayerState(ObjectWithFlick.PlayerState.PLAYER_STATE_IDLE);
@@ -40,9 +41,11 @@ public class BlockNormal : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            if (playerObjWithFlick.playerState == ObjectWithFlick.PlayerState.PLAYER_STATE_IDLE)
+            if (playerObjWithFlick.playerState == ObjectWithFlick.PlayerState.PLAYER_STATE_IDLE ||
+                playerObjWithFlick.playerState == ObjectWithFlick.PlayerState.PLAYER_STATE_TAP)
             {
                 playerObjWithFlick.SetPlayerState(ObjectWithFlick.PlayerState.PLAYER_STATE_JUMP_DOWN);
+                GetTrajectory().Hide();
             }
 
             playerObjWithFlick.SetIfOnBlock(false);

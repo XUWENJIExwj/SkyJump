@@ -46,7 +46,7 @@ public class AudioManager : MonoBehaviour
         audioSource[idx].loop = true;
     }
 
-    public void PlaySE(SE se_idx, float volume = 1.0f, int idx = 1)
+    public void PlaySE(SE se_idx, int idx, float volume = 1.0f)
     {
         audioSource[idx].PlayOneShot(se[(int)se_idx]);
         SetVolume(idx, volume);
@@ -55,5 +55,10 @@ public class AudioManager : MonoBehaviour
     public void SetVolume(int idx, float volume = 1.0f)
     {
         audioSource[idx].volume = volume;
+    }
+
+    public bool GetIsPlaying(int idx)
+    {
+        return audioSource[idx].isPlaying;
     }
 }

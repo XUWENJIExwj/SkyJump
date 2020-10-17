@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour
     public GameObject score;
     public GameObject scoreFrame;
 
+    public GameFade fade;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -34,14 +36,30 @@ public class GameManager : MonoBehaviour
 
         scoreFrame.transform.localPosition = score.transform.localPosition;
         scoreFrame.transform.localScale = score.transform.localScale;
+
+        fade.SetFadeState(Fade.FadeState.FADE_STATE_IN);
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
-        if(playerObjWithFlick.GetGameFlag())
+        switch (fade.GetFadeState())
         {
-            audioManager.PlaySE(AudioManager.SE.SE_GAME_OVER, 0.2f);
-            SceneManager.LoadScene("Result");
-        }
+            case Fade.FadeState.FADE_STATE_IN:
+                fade.FadeIn();
+                break;
+            case Fade.FadeState.FADE_STATE_OUT:
+                fade.FadeOut();
+                break;
+            case Fade.FadeState.FADE_STATE_NEXT_SCENE:
+                SceneManager.LoadScene("Result");
+                break;
+            default:
+                if (playerObjWithFlick.GetIfGameOver())
+                {
+                    fade.SetFadeState(Fade.FadeState.FADE_STATE_OUT);
+                    audioManager.PlaySE(AudioManager.SE.SE_GAME_OVER, 1, 0.2f);
+                }
+                break;
+        }  
     }
 }

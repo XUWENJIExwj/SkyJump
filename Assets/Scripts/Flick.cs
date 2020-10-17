@@ -14,8 +14,8 @@ public class Flick : MonoBehaviour
 
     [SerializeField] float pushForce = 4f;
 
-    Vector2 startPoint;
-    Vector2 endPoint;
+    [SerializeField] Vector2 startPoint;
+    [SerializeField] Vector2 endPoint;
     Vector2 direction;
     Vector2 force;
     public float distance;
@@ -35,7 +35,7 @@ public class Flick : MonoBehaviour
     {
         if ((objWithFlick.playerState == ObjectWithFlick.PlayerState.PLAYER_STATE_IDLE ||
             objWithFlick.playerState == ObjectWithFlick.PlayerState.PLAYER_STATE_TAP ||
-            continueJump) && !objWithFlick.GetGameFlag())
+            continueJump) && !objWithFlick.GetIfGameOver())
         {
             if (Application.isEditor)
             {
@@ -82,9 +82,14 @@ public class Flick : MonoBehaviour
         isDragging = true;
         objWithFlick.DisactivateRb(continueJump);
         startPoint = cam.ScreenToWorldPoint(Input.mousePosition);
+        endPoint = startPoint;
+        distance = Vector2.Distance(startPoint, endPoint);
+        direction = (startPoint - endPoint).normalized;
+        force = direction * distance * pushForce;
+
 
         objWithFlick.SetPlayerState(ObjectWithFlick.PlayerState.PLAYER_STATE_TAP);
-
+        trajectory.UpdateDots(objWithFlick.pos, force);
         trajectory.Show();
     }
 

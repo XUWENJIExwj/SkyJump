@@ -16,6 +16,7 @@ public class ResultManager : MonoBehaviour
 
     public GameObject canvasOldScene;
     public CanvasManager canvasManager;
+    public GameObject scoreDisplay;
     public Score score;
     public Score scoreBest;
     public Score scoreOther;
@@ -25,6 +26,20 @@ public class ResultManager : MonoBehaviour
     public bool hasCreatedSoul;
     public GameObject player;
     public GameObject soulPrefab;
+    public ResultFade fade;
+
+    // バイナリ
+    //public struct RankInfo
+    //{
+    //    public int rank;
+    //    public string name;
+    //    public int score;
+    //}
+
+    //public List<RankInfo> rankInfo;
+    //
+
+    public Rank rank;
 
     // Start is called before the first frame update
     void Start()
@@ -46,8 +61,6 @@ public class ResultManager : MonoBehaviour
 
         if(canvasOldScene = GameObject.Find("Canvas"))
         {
-            //canvasOldScene = GameObject.Find("Canvas");
-
             score = canvasOldScene.GetComponentInChildren<Score>();
             Destroy(canvasOldScene);
         }
@@ -59,12 +72,15 @@ public class ResultManager : MonoBehaviour
             score.score = 100;
         }
 
-        score.transform.SetParent(canvasManager.gameObject.transform);
+        score.transform.SetParent(scoreDisplay.transform);
 
         scoreBest.scoreIndex = score.scoreIndex;
 
         canvasManager.SetScorePosition(-40.0f, frame.anchoredPosition.y - 15.0f);
         canvasManager.SetScoreSize(0.65f, 0.65f);
+
+        rank.GetRank();
+
 
         int score_work = LoadScore();
 
@@ -85,24 +101,40 @@ public class ResultManager : MonoBehaviour
         audioManager.PlayBGM(AudioManager.BGM.BGM_RESULT);
 
         hasCreatedSoul = false;
+
+        fade.SetFadeState(Fade.FadeState.FADE_STATE_IN);
     }
 
     private void FixedUpdate()
     {
-        SetLightSize();
-
-        if (lightObj.transform.localScale.x >= 1.0f && !hasCreatedSoul)
+        switch (fade.GetFadeState())
         {
-            CreateSoul();
+            case Fade.FadeState.FADE_STATE_IN:
+                fade.FadeIn();
+                break;
+            case Fade.FadeState.FADE_STATE_OUT:
+                fade.FadeOut();
+                break;
+            case Fade.FadeState.FADE_STATE_NEXT_SCENE:
+                Destroy(canvasManager.gameObject);
+                SceneManager.LoadScene("Title");
+                break;
+            default:
+                SetLightSize();
+
+                if (lightObj.transform.localScale.x >= 1.0f && !hasCreatedSoul)
+                {
+                    CreateSoul();
+                }
+                break;
         }
     }
 
     // Update is called once per frame
     public void OnClickStart()
     {
-        Destroy(canvasManager.gameObject);
-        audioManager.PlaySE(AudioManager.SE.SE_RESULT, 0.5f);
-        SceneManager.LoadScene("Title");
+        fade.SetFadeState(Fade.FadeState.FADE_STATE_OUT);
+        audioManager.PlaySE(AudioManager.SE.SE_RESULT, 1, 0.5f);
     }
 
     public int LoadScore()
@@ -137,6 +169,76 @@ public class ResultManager : MonoBehaviour
         }
     }
 
+//    public void LoadRankInfo()
+//    {
+//        string path;
+//        string filename = "/score.txt";
+
+//        if (Application.isEditor)
+//        {
+//            path = Application.dataPath + filename;
+//        }
+//        else
+//        {
+//#if UNITY_IOS
+
+//#elif UNITY_ANDROID
+
+//            path = Application.persistentDataPath + filename;
+//#endif
+//        }
+
+//        FileStream fs = new FileStream(path, FileMode.Open);
+//        BinaryReader br = new BinaryReader(fs); //true=追記 false=上書き
+
+//        for (int i = 0; i < rank_info.Count; i++)
+//        {
+//            bw.Write(rank_info[i].name);
+//            bw.Write(rank_info[i].score);
+//        }
+
+
+//        bw.Flush();
+//        bw.Close();
+//        fs.Flush();
+//        fs.Close();
+//    }
+
+//    public void SaveRankInfo(List<RankInfo> rank_info)
+//    {
+//        string path;
+//        string filename = "/score.txt";
+
+//        if (Application.isEditor)
+//        {
+//            path = Application.dataPath + filename;
+//        }
+//        else
+//        {
+//#if UNITY_IOS
+
+//#elif UNITY_ANDROID
+
+//            path = Application.persistentDataPath + filename;
+//#endif
+//        }
+
+//        FileStream fs = new FileStream(path, FileMode.Create);
+//        BinaryWriter bw = new BinaryWriter(fs); //true=追記 false=上書き
+
+//        for (int i = 0; i < rank_info.Count; i++)
+//        {
+//            bw.Write(rank_info[i].name);
+//            bw.Write(rank_info[i].score);
+//        }
+        
+
+//        bw.Flush();
+//        bw.Close();
+//        fs.Flush();
+//        fs.Close();
+//    }
+
     public void SaveScore(string s)
     {
         string path;
@@ -155,7 +257,7 @@ public class ResultManager : MonoBehaviour
             path = Application.persistentDataPath + filename;
 #endif
         }
-
+        
         StreamWriter sw = new StreamWriter(path, false); //true=追記 false=上書き
         sw.WriteLine(s);
         sw.Flush();

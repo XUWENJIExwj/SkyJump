@@ -8,6 +8,9 @@ public class ObjectWithFlick : MonoBehaviour
     public float halfScreenWidth;
     public float screenHeight;
     public float halfScreenHeight;
+    public float halfSize;
+    public float posLeft;
+    public float posRight;
 
     [HideInInspector] public Rigidbody2D playerRb;
     [HideInInspector] public Collider2D playerCollider;
@@ -42,6 +45,9 @@ public class ObjectWithFlick : MonoBehaviour
         halfScreenWidth = screenWidth / 2;
         screenHeight = (float)Screen.height / 100;
         halfScreenHeight = screenHeight / 2;
+
+        RectTransform rect = GetComponent<RectTransform>();
+        halfSize = rect.sizeDelta.x * rect.localScale.x / 2;
 
         playerRb = GetComponent<Rigidbody2D>();
         //col = GetComponent<Collider2D>();
@@ -94,9 +100,12 @@ public class ObjectWithFlick : MonoBehaviour
                 break;
         }
 
+        posLeft = transform.position.x + halfSize;
+        posRight = transform.position.x - halfSize;
+
         // 画面外チェック
-        if (transform.position.x < -halfScreenWidth ||
-            transform.position.x > halfScreenWidth ||
+        if (posLeft < -halfScreenWidth ||
+            posRight > halfScreenWidth ||
             transform.position.y < Camera.main.transform.position.y - halfScreenHeight)
         {
             SetGameOver();
@@ -106,7 +115,7 @@ public class ObjectWithFlick : MonoBehaviour
     public void Push(Vector2 force)
     {
         playerRb.AddForce(force, ForceMode2D.Impulse);
-        audioManager.PlaySE(AudioManager.SE.SE_GAME_PLAYER_JUMP);
+        audioManager.PlaySE(AudioManager.SE.SE_GAME_PLAYER_JUMP, 1);
     }
 
     public void ActivateRb()
@@ -189,9 +198,12 @@ public class ObjectWithFlick : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Plane") && playerState == PlayerState.PLAYER_STATE_JUMP_DOWN)
+        if (collision.gameObject.CompareTag("Plane") && (playerState == PlayerState.PLAYER_STATE_JUMP_DOWN ||
+            (playerState == PlayerState.PLAYER_STATE_JUMP_UP && oldPlayerState == PlayerState.PLAYER_STATE_TAP)))
         {
             SetIfOnBlock(true);
+            playerRb.velocity = Vector3.zero;
+            playerRb.angularVelocity = 0f;
             SetPlayerState(PlayerState.PLAYER_STATE_IDLE);
         }
     }
@@ -216,9 +228,12 @@ public class ObjectWithFlick : MonoBehaviour
 
         if(collision.gameObject.CompareTag("Enemy"))
         {
-            audioManager.PlaySE(AudioManager.SE.SE_GAME_PLAYER_COLLISION);
+            if(!audioManager.GetIsPlaying(2))
+            {
+                audioManager.PlaySE(AudioManager.SE.SE_GAME_PLAYER_COLLISION, 2);
+            }
 
-            SetGameOver();
+            //SetGameOver();
         }
     }
 
@@ -232,7 +247,7 @@ public class ObjectWithFlick : MonoBehaviour
         return isOnBlock;
     }
 
-    public bool GetGameFlag()
+    public bool GetIfGameOver()
     {
         return isGameOver;
     }
