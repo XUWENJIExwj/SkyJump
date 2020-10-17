@@ -81,18 +81,16 @@ public class ResultManager : MonoBehaviour
 
         rank.GetRank();
 
+        rank.RankDebug();
 
-        int score_work = LoadScore();
+        if (rank.CheckIfRankIn(score.score))
+        {
+            // 入力処理
+            rank.SetNewRankInfo("kyo", score.score);
+            rank.SortRank();
+        }
 
-        if (score.score >= score_work)
-        {
-            SaveScore(score.score.ToString());
-            scoreBest.SetScore((float)score.score / score.scoreIndex);
-        }
-        else
-        {
-            scoreBest.SetScore((float)score_work / score.scoreIndex);
-        }
+        scoreBest.SetScore((float)rank.GetChampion().score / score.scoreIndex);
 
         canvasManager.SetScoreBestPosition(45.0f, frame.anchoredPosition.y - 175.0f);
         canvasManager.SetScoreBestSize(0.48f, 0.48f);

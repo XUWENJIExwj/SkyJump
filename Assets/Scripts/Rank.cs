@@ -28,17 +28,35 @@ public class Rank : MonoBehaviour
 
     public void GetRank()
     {
+        rankInfo = new RankInfo[5];
+
         for (int i = 0; i < rankInfo.Length; i++)
         {
             rankInfo[i].rank = PlayerPrefs.GetInt("RANK" + i.ToString(), 0);
             rankInfo[i].name = PlayerPrefs.GetString("NAME" + i.ToString(), "");
             rankInfo[i].score = PlayerPrefs.GetInt("SCORE" + i.ToString(), 0);
         }
+
+        PlayerPrefs.Save();
     }
 
-    public void SortRank(RankInfo rank_info)
+    public RankInfo GetChampion()
     {
-        RankInfo temp = rank_info;
+        return rankInfo[0];
+    }
+
+    public bool CheckIfRankIn(int score)
+    {
+        if (score > rankInfo[rankInfo.Length - 1].score)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public void SortRank()
+    {
+        RankInfo temp = newRank;
 
         for (int i = 0; i < rankInfo.Length; i++)
         {
@@ -55,12 +73,29 @@ public class Rank : MonoBehaviour
                 SetRank(i);
             }
         }
+        PlayerPrefs.Save();
     }
 
     public void SetRank(int idx)
     {
         PlayerPrefs.SetInt("RANK" + idx.ToString(), rankInfo[idx].rank);
-        PlayerPrefs.GetString("NAME" + idx.ToString(), rankInfo[idx].name);
-        PlayerPrefs.GetInt("SCORE" + idx.ToString(), rankInfo[idx].score);
+        PlayerPrefs.SetString("NAME" + idx.ToString(), rankInfo[idx].name);
+        PlayerPrefs.SetInt("SCORE" + idx.ToString(), rankInfo[idx].score);
+    }
+
+    public void SetNewRankInfo(string name, int score)
+    {
+        newRank.name = name;
+        newRank.score = score;
+    }
+
+    public void RankDebug()
+    {
+        for (int i = 0; i < rankInfo.Length; i++)
+        {
+            Debug.Log("Rank: " + rankInfo[i].rank);
+            Debug.Log("Name: " + rankInfo[i].name);
+            Debug.Log("Score:" + rankInfo[i].score);
+        }
     }
 }
