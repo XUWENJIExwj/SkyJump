@@ -79,18 +79,16 @@ public class ResultManager : MonoBehaviour
         canvasManager.SetScorePosition(-40.0f, frame.anchoredPosition.y - 15.0f);
         canvasManager.SetScoreSize(0.65f, 0.65f);
 
-        rank.GetRank();
-
-        rank.RankDebug();
+        rank.LoadRank();
 
         if (rank.CheckIfRankIn(score.score))
         {
             // 入力処理
-            rank.SetNewRankInfo("kyo", score.score);
+            rank.SetNewRankInfo("kyokyy", score.score);
             rank.SortRank();
         }
 
-        scoreBest.SetScore((float)rank.GetChampion().score / score.scoreIndex);
+        scoreBest.SetScore((float)rank.LoadChampionInfo().score / score.scoreIndex);
 
         canvasManager.SetScoreBestPosition(45.0f, frame.anchoredPosition.y - 175.0f);
         canvasManager.SetScoreBestSize(0.48f, 0.48f);
@@ -129,7 +127,7 @@ public class ResultManager : MonoBehaviour
     }
 
     // Update is called once per frame
-    public void OnClickStart()
+    public void GoToTitleScene()
     {
         fade.SetFadeState(Fade.FadeState.FADE_STATE_OUT);
         audioManager.PlaySE(AudioManager.SE.SE_RESULT, 1, 0.5f);

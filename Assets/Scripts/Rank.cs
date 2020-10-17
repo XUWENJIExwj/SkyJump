@@ -26,7 +26,7 @@ public class Rank : MonoBehaviour
         
     }
 
-    public void GetRank()
+    public void LoadRank()
     {
         rankInfo = new RankInfo[5];
 
@@ -40,7 +40,12 @@ public class Rank : MonoBehaviour
         PlayerPrefs.Save();
     }
 
-    public RankInfo GetChampion()
+    public RankInfo GetRankInfo(int idx)
+    {
+        return rankInfo[idx];
+    }
+
+    public RankInfo LoadChampionInfo()
     {
         return rankInfo[0];
     }
@@ -70,13 +75,13 @@ public class Rank : MonoBehaviour
 
                 temp = work;
 
-                SetRank(i);
+                SaveRank(i);
             }
         }
         PlayerPrefs.Save();
     }
 
-    public void SetRank(int idx)
+    public void SaveRank(int idx)
     {
         PlayerPrefs.SetInt("RANK" + idx.ToString(), rankInfo[idx].rank);
         PlayerPrefs.SetString("NAME" + idx.ToString(), rankInfo[idx].name);

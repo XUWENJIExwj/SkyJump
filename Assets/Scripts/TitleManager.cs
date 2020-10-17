@@ -16,6 +16,7 @@ public class TitleManager : MonoBehaviour
     public AudioManager audioManager;
 
     public GameObject canvas;
+    public Rank rank;
     public Text scoreBest;
     public GameObject best;
     public TitleFade fade;
@@ -23,6 +24,8 @@ public class TitleManager : MonoBehaviour
     public GameObject particle;
 
     private string nextScene;
+
+    public bool deleteRank = false;
 
     // Start is called before the first frame update
     void Start()
@@ -43,13 +46,18 @@ public class TitleManager : MonoBehaviour
         // BGMの再生
         audioManager.PlayBGM(AudioManager.BGM.BGM_TITLE);
 
-        //CreateScoreFile();
+        if(deleteRank)
+        {
+            PlayerPrefs.DeleteAll();
+        }
 
-        if (LoadScore() != 0)
+        rank.LoadRank();
+
+        if (rank.LoadChampionInfo().rank != 0)
         {
             best.SetActive(true);
             scoreBest.gameObject.SetActive(true);
-            scoreBest.text = "Best Score : " + LoadScore().ToString() + " m";
+            scoreBest.text = "Best Score : " + rank.LoadChampionInfo().score.ToString() + " m";
         }
         else
         {
