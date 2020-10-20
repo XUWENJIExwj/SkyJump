@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.IO;
+using UnityEngine.UI;
 
 public class ResultManager : MonoBehaviour
 {
@@ -13,6 +14,8 @@ public class ResultManager : MonoBehaviour
 
     public GameObject audioManagerPrefab;
     public AudioManager audioManager;
+    public GameObject skinSupportPrefab;
+    public SkinSupport skinSupport;
 
     public GameObject canvasOldScene;
     public CanvasManager canvasManager;
@@ -27,17 +30,8 @@ public class ResultManager : MonoBehaviour
     public GameObject player;
     public GameObject soulPrefab;
     public ResultFade fade;
-
-    // バイナリ
-    //public struct RankInfo
-    //{
-    //    public int rank;
-    //    public string name;
-    //    public int score;
-    //}
-
-    //public List<RankInfo> rankInfo;
-    //
+    public InputField inputer;
+    public CheckStringByte checkStringByte;
 
     public Rank rank;
 
@@ -59,7 +53,15 @@ public class ResultManager : MonoBehaviour
         }
         audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
 
-        if(canvasOldScene = GameObject.Find("Canvas"))
+        // SkinManagerへのアタッチ
+        if (!GameObject.Find("SkinSupport"))
+        {
+            Instantiate(skinSupportPrefab, new Vector3(0.0f, 0.0f, 0.0f), Quaternion.identity).name = "SkinSupport";
+        }
+        skinSupport = GameObject.Find("SkinSupport").GetComponent<SkinSupport>();
+        player.GetComponent<SpriteRenderer>().color = skinSupport.GetPlayerColor();
+
+        if (canvasOldScene = GameObject.Find("Canvas"))
         {
             score = canvasOldScene.GetComponentInChildren<Score>();
             Destroy(canvasOldScene);
@@ -79,13 +81,17 @@ public class ResultManager : MonoBehaviour
         canvasManager.SetScorePosition(-40.0f, frame.anchoredPosition.y - 15.0f);
         canvasManager.SetScoreSize(0.65f, 0.65f);
 
+        //rank.LoadRankBinary();
+
         rank.LoadRank();
 
         if (rank.CheckIfRankIn(score.score))
         {
+            inputer.gameObject.SetActive(true);
             // 入力処理
-            rank.SetNewRankInfo("kyokyy", score.score);
+            rank.SetNewRankInfo("Player", score.score);
             rank.SortRank();
+            //rank.SortRankBinary();
         }
 
         scoreBest.SetScore((float)rank.LoadChampionInfo().score / score.scoreIndex);
@@ -126,11 +132,32 @@ public class ResultManager : MonoBehaviour
         }
     }
 
+    public void InputNameOK()
+    {
+        int idx = rank.GetNewRankInfo().rank - 1;
+        rank.SetNewRankName(inputer.textComponent.text, idx);
+
+        checkStringByte.MakeCharacterToLimit(rank.GetRankInfo(idx).name);
+        rank.SaveRank(idx);
+        //rank.SaveRankBinary();
+
+        audioManager.PlaySE(AudioManager.SE.SE_RESULT, 1, 0.5f);
+        inputer.gameObject.SetActive(false);
+    }
+
+    public void InputNameCancel()
+    {
+        inputer.textComponent.text = "";
+
+        audioManager.PlaySE(AudioManager.SE.SE_RESULT, 1, 0.5f);
+        inputer.gameObject.SetActive(false);
+    }
+
     // Update is called once per frame
     public void GoToTitleScene()
     {
+        InputNameCancel();
         fade.SetFadeState(Fade.FadeState.FADE_STATE_OUT);
-        audioManager.PlaySE(AudioManager.SE.SE_RESULT, 1, 0.5f);
     }
 
     public int LoadScore()
@@ -164,76 +191,6 @@ public class ResultManager : MonoBehaviour
             return 0;
         }
     }
-
-//    public void LoadRankInfo()
-//    {
-//        string path;
-//        string filename = "/score.txt";
-
-//        if (Application.isEditor)
-//        {
-//            path = Application.dataPath + filename;
-//        }
-//        else
-//        {
-//#if UNITY_IOS
-
-//#elif UNITY_ANDROID
-
-//            path = Application.persistentDataPath + filename;
-//#endif
-//        }
-
-//        FileStream fs = new FileStream(path, FileMode.Open);
-//        BinaryReader br = new BinaryReader(fs); //true=追記 false=上書き
-
-//        for (int i = 0; i < rank_info.Count; i++)
-//        {
-//            bw.Write(rank_info[i].name);
-//            bw.Write(rank_info[i].score);
-//        }
-
-
-//        bw.Flush();
-//        bw.Close();
-//        fs.Flush();
-//        fs.Close();
-//    }
-
-//    public void SaveRankInfo(List<RankInfo> rank_info)
-//    {
-//        string path;
-//        string filename = "/score.txt";
-
-//        if (Application.isEditor)
-//        {
-//            path = Application.dataPath + filename;
-//        }
-//        else
-//        {
-//#if UNITY_IOS
-
-//#elif UNITY_ANDROID
-
-//            path = Application.persistentDataPath + filename;
-//#endif
-//        }
-
-//        FileStream fs = new FileStream(path, FileMode.Create);
-//        BinaryWriter bw = new BinaryWriter(fs); //true=追記 false=上書き
-
-//        for (int i = 0; i < rank_info.Count; i++)
-//        {
-//            bw.Write(rank_info[i].name);
-//            bw.Write(rank_info[i].score);
-//        }
-        
-
-//        bw.Flush();
-//        bw.Close();
-//        fs.Flush();
-//        fs.Close();
-//    }
 
     public void SaveScore(string s)
     {
@@ -272,6 +229,10 @@ public class ResultManager : MonoBehaviour
     {
         hasCreatedSoul = true;
         Vector3 pos = new Vector3(-0.6f, -3.1f, -2.0f);
-        Instantiate(soulPrefab, pos, Quaternion.identity);
+        GameObject soul = Instantiate(soulPrefab, pos, Quaternion.identity);
+        Animation animation = soul.GetComponent<Animation>();
+        string clip = "Soul0" + skinSupport.GetPlayerType().ToString();
+        animation.clip = animation.GetClip(clip);
+        animation.Play();
     }
 }

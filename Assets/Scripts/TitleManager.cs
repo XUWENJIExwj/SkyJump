@@ -15,6 +15,10 @@ public class TitleManager : MonoBehaviour
     public GameObject audioManagerPrefab;
     public AudioManager audioManager;
 
+    public GameObject skinSupportPrefab;
+    public SkinSupport skinSupport;
+    public SkinManager skinManager;
+
     public GameObject canvas;
     public Rank rank;
     public Text scoreBest;
@@ -43,15 +47,25 @@ public class TitleManager : MonoBehaviour
         }
         audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
 
+        // SkinManagerへのアタッチ
+        if (!GameObject.Find("SkinSupport"))
+        {
+            Instantiate(skinSupportPrefab, new Vector3(0.0f, 0.0f, 0.0f), Quaternion.identity).name = "SkinSupport";
+        }
+        skinSupport = GameObject.Find("SkinSupport").GetComponent<SkinSupport>();
+        skinManager.SetSkinSupport(skinSupport);
+        skinManager.InitInTitleScene();
+
         // BGMの再生
         audioManager.PlayBGM(AudioManager.BGM.BGM_TITLE);
 
-        if(deleteRank)
+        if (deleteRank)
         {
             PlayerPrefs.DeleteAll();
         }
 
         rank.LoadRank();
+        //rank.LoadRankBinary();
 
         if (rank.LoadChampionInfo().rank != 0)
         {

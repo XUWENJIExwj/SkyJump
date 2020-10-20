@@ -1,30 +1,25 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
+using System.Runtime.InteropServices;
 
 public class Rank : MonoBehaviour
 {
+    //[StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct RankInfo
     {
+        //[MarshalAs(UnmanagedType.I4, SizeConst = 1)]
         public int rank;
+        //[MarshalAs(UnmanagedType.BStr, SizeConst = 6)]
         public string name;
+        //[MarshalAs(UnmanagedType.I4, SizeConst = 1)]
         public int score;
     }
 
+    //[MarshalAs(UnmanagedType.ByValArray, SizeConst = 5, ArraySubType = UnmanagedType.Struct)]
     public RankInfo[] rankInfo;
     public RankInfo newRank;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     public void LoadRank()
     {
@@ -63,6 +58,8 @@ public class Rank : MonoBehaviour
     {
         RankInfo temp = newRank;
 
+        bool hasGetRank = false;
+
         for (int i = 0; i < rankInfo.Length; i++)
         {
             if (rankInfo[i].score < temp.score)
@@ -72,6 +69,12 @@ public class Rank : MonoBehaviour
                 rankInfo[i].rank = i + 1;
                 rankInfo[i].name = temp.name;
                 rankInfo[i].score = temp.score;
+
+                if(!hasGetRank)
+                {
+                    hasGetRank = true;
+                    newRank.rank = rankInfo[i].rank;
+                }
 
                 temp = work;
 
@@ -94,6 +97,16 @@ public class Rank : MonoBehaviour
         newRank.score = score;
     }
 
+    public RankInfo GetNewRankInfo()
+    {
+        return newRank;
+    }
+
+    public void SetNewRankName(string name, int idx)
+    {
+        rankInfo[idx].name = name;
+    }
+
     public void RankDebug()
     {
         for (int i = 0; i < rankInfo.Length; i++)
@@ -101,6 +114,148 @@ public class Rank : MonoBehaviour
             Debug.Log("Rank: " + rankInfo[i].rank);
             Debug.Log("Name: " + rankInfo[i].name);
             Debug.Log("Score:" + rankInfo[i].score);
+        }
+    }
+
+    public void LoadRankBinary()
+    {
+        string path;
+        string filename = "/rank.data";
+
+        rankInfo = new RankInfo[5];
+
+        if (Application.isEditor)
+        {
+            path = Application.dataPath + filename;
+        }
+        else
+        {
+#if UNITY_IOS
+
+#elif UNITY_ANDROID
+
+            path = Application.persistentDataPath + filename;
+#endif
+        }
+
+        if(File.Exists(path))
+        {
+            using (FileStream fs = new FileStream(path, FileMode.Create))
+            {
+                using (BinaryReader br = new BinaryReader(fs)) //true=追記 false=上書き
+                {
+                    
+                    int size = Marshal.SizeOf(rankInfo);
+
+                    byte[] bytes = br.ReadBytes(size);
+
+                    System.IntPtr buffer = Marshal.AllocHGlobal(size);
+
+                    try
+                    {
+                        Marshal.Copy(bytes, 0, buffer, size);
+                        Marshal.PtrToStructure(buffer, rankInfo);
+                    }
+                    finally
+                    {
+                        Marshal.FreeHGlobal(buffer);
+                    }
+
+                    //for (int i = 0; i < rankInfo.Length; i++)
+                    //{
+                    //    rankInfo[i].rank = br.ReadByte();
+                    //    rankInfo[i].name = br.ReadBytes(6).ToString();
+                    //    rankInfo[i].score = br.ReadByte();
+                    //}
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < rankInfo.Length; i++)
+            {
+                rankInfo[i].rank = 0;
+                rankInfo[i].name = "      ";
+                rankInfo[i].score = 0;
+            }
+        }
+    }
+
+    public void SortRankBinary()
+    {
+        RankInfo temp = newRank;
+
+        bool hasGetRank = false;
+
+        for (int i = 0; i < rankInfo.Length; i++)
+        {
+            if (rankInfo[i].score < temp.score)
+            {
+                RankInfo work = rankInfo[i];
+
+                rankInfo[i].rank = i + 1;
+                rankInfo[i].name = temp.name;
+                rankInfo[i].score = temp.score;
+
+                if (!hasGetRank)
+                {
+                    hasGetRank = true;
+                    newRank.rank = rankInfo[i].rank;
+                }
+
+                temp = work;
+            }
+        }
+
+        SaveRankBinary();
+    }
+
+    public void SaveRankBinary()
+    {
+        string path;
+        string filename = "/rank.data";
+
+        if (Application.isEditor)
+        {
+            path = Application.dataPath + filename;
+        }
+        else
+        {
+#if UNITY_IOS
+
+#elif UNITY_ANDROID
+
+            path = Application.persistentDataPath + filename;
+#endif
+        }
+
+        using (FileStream fs = new FileStream(path, FileMode.Create))
+        {
+            using (BinaryWriter bw = new BinaryWriter(fs)) //true=追記 false=上書き
+            {
+                int size = Marshal.SizeOf(rankInfo);
+                System.IntPtr buffer = Marshal.AllocHGlobal(size);
+
+                try
+                {
+                    Marshal.StructureToPtr(rankInfo, buffer, false);
+                    byte[] bytes = new byte[size];
+                    Marshal.Copy(buffer, bytes, 0, size);
+
+                    bw.Write(bytes);
+                }
+                finally
+                {
+                    Marshal.FreeHGlobal(buffer);
+                }
+
+                //for (int i = 0; i < rankInfo.Length; i++)
+                //{
+                //    bw.Write(rankInfo[i].rank);
+                //    bw.Write(rankInfo[i].name);
+                //    bw.Write(rankInfo[i].score);
+                //}
+            }
         }
     }
 }

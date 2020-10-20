@@ -41,6 +41,7 @@ public class RankManger : MonoBehaviour
         audioManager.PlayBGM(AudioManager.BGM.BGM_TITLE);
 
         rank.LoadRank();
+        //rank.LoadRankBinary();
 
         for (int i = 0; i < 5; i++)
         {
@@ -53,8 +54,8 @@ public class RankManger : MonoBehaviour
             }
             else
             {
-                nameText[i].text = "- - - - -";
-                scoreText[i].text = "- - - - -";
+                nameText[i].text = "- - - - - - -";
+                scoreText[i].text = "- - - - - -";
             }
         }
 
