@@ -59,7 +59,11 @@ public class ResultManager : MonoBehaviour
             Instantiate(skinSupportPrefab, new Vector3(0.0f, 0.0f, 0.0f), Quaternion.identity).name = "SkinSupport";
         }
         skinSupport = GameObject.Find("SkinSupport").GetComponent<SkinSupport>();
-        player.GetComponent<SpriteRenderer>().color = skinSupport.GetPlayerColor();
+        player.GetComponent<SpriteRenderer>().color = new Vector4(
+            skinSupport.GetPlayerColor().r * 140 / 255.0f,
+            skinSupport.GetPlayerColor().g * 140 / 255.0f,
+            skinSupport.GetPlayerColor().b * 140 / 255.0f,
+            1.0f);
 
         if (canvasOldScene = GameObject.Find("Canvas"))
         {
@@ -160,62 +164,62 @@ public class ResultManager : MonoBehaviour
         fade.SetFadeState(Fade.FadeState.FADE_STATE_OUT);
     }
 
-    public int LoadScore()
-    {
-        string path;
-        string filename = "/score.txt";
+//    public int LoadScore()
+//    {
+//        string path;
+//        string filename = "/score.txt";
 
-        if (Application.isEditor)
-        {
-            path = Application.dataPath + filename;
-        }
-        else
-        {
-#if UNITY_IOS
+//        if (Application.isEditor)
+//        {
+//            path = Application.dataPath + filename;
+//        }
+//        else
+//        {
+//#if UNITY_IOS
 
-#elif UNITY_ANDROID
+//#elif UNITY_ANDROID
 
-            path = Application.persistentDataPath + filename;
-#endif
-        }
+//            path = Application.persistentDataPath + filename;
+//#endif
+//        }
 
-        if (File.Exists(path))
-        {
-            StreamReader sr = new StreamReader(path);
-            int s = int.Parse(sr.ReadLine());
-            sr.Close();
-            return s;
-        }
-        else
-        {
-            return 0;
-        }
-    }
+//        if (File.Exists(path))
+//        {
+//            StreamReader sr = new StreamReader(path);
+//            int s = int.Parse(sr.ReadLine());
+//            sr.Close();
+//            return s;
+//        }
+//        else
+//        {
+//            return 0;
+//        }
+//    }
 
-    public void SaveScore(string s)
-    {
-        string path;
-        string filename = "/score.txt";
+//    public void SaveScore(string s)
+//    {
+//        string path;
+//        string filename = "/score.txt";
 
-        if (Application.isEditor)
-        {
-            path = Application.dataPath + filename;
-        }
-        else
-        {
-#if UNITY_IOS
+//        if (Application.isEditor)
+//        {
+//            path = Application.dataPath + filename;
+//        }
+//        else
+//        {
+//#if UNITY_IOS
 
-#elif UNITY_ANDROID
+//#elif UNITY_ANDROID
 
-            path = Application.persistentDataPath + filename;
-#endif
-        }
+//            path = Application.persistentDataPath + filename;
+//#endif
+//        }
         
-        StreamWriter sw = new StreamWriter(path, false); //true=追記 false=上書き
-        sw.WriteLine(s);
-        sw.Flush();
-        sw.Close();
-    }
+//        StreamWriter sw = new StreamWriter(path, false); //true=追記 false=上書き
+//        sw.WriteLine(s);
+//        sw.Flush();
+//        sw.Close();
+//    }
 
     public void SetLightSize()
     {

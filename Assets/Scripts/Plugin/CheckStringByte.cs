@@ -54,7 +54,6 @@ public class CheckStringByte : MonoBehaviour
         {
             str += " ";
         }
-        Debug.Log(str);
     }
 
     public bool IfFullWidthCharacter(char c)

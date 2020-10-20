@@ -46,6 +46,7 @@ public class TitleManager : MonoBehaviour
             Instantiate(audioManagerPrefab, new Vector3(0.0f, 0.0f, 0.0f), Quaternion.identity).name = "AudioManager";
         }
         audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
+        skinManager.SetAudioManager(audioManager);
 
         // SkinManagerへのアタッチ
         if (!GameObject.Find("SkinSupport"))
@@ -150,35 +151,35 @@ public class TitleManager : MonoBehaviour
     //        }
     //    }
 
-    public int LoadScore()
-    {
-        string path;
-        string filename = "/score.txt";
+//    public int LoadScore()
+//    {
+//        string path;
+//        string filename = "/score.txt";
 
-        if (Application.isEditor)
-        {
-            path = Application.dataPath + filename;
-        }
-        else
-        {
-#if UNITY_IOS
+//        if (Application.isEditor)
+//        {
+//            path = Application.dataPath + filename;
+//        }
+//        else
+//        {
+//#if UNITY_IOS
 
-#elif UNITY_ANDROID
+//#elif UNITY_ANDROID
 
-            path = Application.persistentDataPath + filename;
-#endif
-        }
+//            path = Application.persistentDataPath + filename;
+//#endif
+//        }
 
-        if (File.Exists(path))
-        {
-            StreamReader sr = new StreamReader(path);
-            int s = int.Parse(sr.ReadLine());
-            sr.Close();
-            return s;
-        }
-        else
-        {
-            return 0;
-        }
-    }
+//        if (File.Exists(path))
+//        {
+//            StreamReader sr = new StreamReader(path);
+//            int s = int.Parse(sr.ReadLine());
+//            sr.Close();
+//            return s;
+//        }
+//        else
+//        {
+//            return 0;
+//        }
+//    }
 }

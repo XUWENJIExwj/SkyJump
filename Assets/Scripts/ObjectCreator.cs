@@ -108,7 +108,7 @@ public class ObjectCreator : MonoBehaviour
             0.0f,
             -halfScreenHeight + playerRectTransform.sizeDelta.y / 2 * playerRectTransform.localScale.y + 1.1f,
             //plane.transform.position.y + plane.transform.localScale.y / 2 + playerRectTransform.sizeDelta.y / 2 * playerRectTransform.localScale.y,
-            - 1.0f);
+            -5.0f);
 
         CreateBG(0, 0);
 
