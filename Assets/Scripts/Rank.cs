@@ -117,145 +117,145 @@ public class Rank : MonoBehaviour
         }
     }
 
-    public void LoadRankBinary()
-    {
-        string path;
-        string filename = "/rank.data";
+//    public void LoadRankBinary()
+//    {
+//        string path;
+//        string filename = "/rank.data";
 
-        rankInfo = new RankInfo[5];
+//        rankInfo = new RankInfo[5];
 
-        if (Application.isEditor)
-        {
-            path = Application.dataPath + filename;
-        }
-        else
-        {
-#if UNITY_IOS
+//        if (Application.isEditor)
+//        {
+//            path = Application.dataPath + filename;
+//        }
+//        else
+//        {
+//#if UNITY_IOS
 
-#elif UNITY_ANDROID
+//#elif UNITY_ANDROID
 
-            path = Application.persistentDataPath + filename;
-#endif
-        }
+//            path = Application.persistentDataPath + filename;
+//#endif
+//        }
 
-        if(File.Exists(path))
-        {
-            using (FileStream fs = new FileStream(path, FileMode.Create))
-            {
-                using (BinaryReader br = new BinaryReader(fs)) //true=追記 false=上書き
-                {
+//        if(File.Exists(path))
+//        {
+//            using (FileStream fs = new FileStream(path, FileMode.Create))
+//            {
+//                using (BinaryReader br = new BinaryReader(fs)) //true=追記 false=上書き
+//                {
                     
-                    int size = Marshal.SizeOf(rankInfo);
+//                    int size = Marshal.SizeOf(rankInfo);
 
-                    byte[] bytes = br.ReadBytes(size);
+//                    byte[] bytes = br.ReadBytes(size);
 
-                    System.IntPtr buffer = Marshal.AllocHGlobal(size);
+//                    System.IntPtr buffer = Marshal.AllocHGlobal(size);
 
-                    try
-                    {
-                        Marshal.Copy(bytes, 0, buffer, size);
-                        Marshal.PtrToStructure(buffer, rankInfo);
-                    }
-                    finally
-                    {
-                        Marshal.FreeHGlobal(buffer);
-                    }
+//                    try
+//                    {
+//                        Marshal.Copy(bytes, 0, buffer, size);
+//                        Marshal.PtrToStructure(buffer, rankInfo);
+//                    }
+//                    finally
+//                    {
+//                        Marshal.FreeHGlobal(buffer);
+//                    }
 
-                    //for (int i = 0; i < rankInfo.Length; i++)
-                    //{
-                    //    rankInfo[i].rank = br.ReadByte();
-                    //    rankInfo[i].name = br.ReadBytes(6).ToString();
-                    //    rankInfo[i].score = br.ReadByte();
-                    //}
-                }
-            }
-        }
-        else
-        {
-            for (int i = 0; i < rankInfo.Length; i++)
-            {
-                rankInfo[i].rank = 0;
-                rankInfo[i].name = "      ";
-                rankInfo[i].score = 0;
-            }
-        }
-    }
+//                    //for (int i = 0; i < rankInfo.Length; i++)
+//                    //{
+//                    //    rankInfo[i].rank = br.ReadByte();
+//                    //    rankInfo[i].name = br.ReadBytes(6).ToString();
+//                    //    rankInfo[i].score = br.ReadByte();
+//                    //}
+//                }
+//            }
+//        }
+//        else
+//        {
+//            for (int i = 0; i < rankInfo.Length; i++)
+//            {
+//                rankInfo[i].rank = 0;
+//                rankInfo[i].name = "      ";
+//                rankInfo[i].score = 0;
+//            }
+//        }
+//    }
 
-    public void SortRankBinary()
-    {
-        RankInfo temp = newRank;
+    //public void SortRankBinary()
+    //{
+    //    RankInfo temp = newRank;
 
-        bool hasGetRank = false;
+    //    bool hasGetRank = false;
 
-        for (int i = 0; i < rankInfo.Length; i++)
-        {
-            if (rankInfo[i].score < temp.score)
-            {
-                RankInfo work = rankInfo[i];
+    //    for (int i = 0; i < rankInfo.Length; i++)
+    //    {
+    //        if (rankInfo[i].score < temp.score)
+    //        {
+    //            RankInfo work = rankInfo[i];
 
-                rankInfo[i].rank = i + 1;
-                rankInfo[i].name = temp.name;
-                rankInfo[i].score = temp.score;
+    //            rankInfo[i].rank = i + 1;
+    //            rankInfo[i].name = temp.name;
+    //            rankInfo[i].score = temp.score;
 
-                if (!hasGetRank)
-                {
-                    hasGetRank = true;
-                    newRank.rank = rankInfo[i].rank;
-                }
+    //            if (!hasGetRank)
+    //            {
+    //                hasGetRank = true;
+    //                newRank.rank = rankInfo[i].rank;
+    //            }
 
-                temp = work;
-            }
-        }
+    //            temp = work;
+    //        }
+    //    }
 
-        SaveRankBinary();
-    }
+    //    SaveRankBinary();
+    //}
 
-    public void SaveRankBinary()
-    {
-        string path;
-        string filename = "/rank.data";
+//    public void SaveRankBinary()
+//    {
+//        string path;
+//        string filename = "/rank.data";
 
-        if (Application.isEditor)
-        {
-            path = Application.dataPath + filename;
-        }
-        else
-        {
-#if UNITY_IOS
+//        if (Application.isEditor)
+//        {
+//            path = Application.dataPath + filename;
+//        }
+//        else
+//        {
+//#if UNITY_IOS
 
-#elif UNITY_ANDROID
+//#elif UNITY_ANDROID
 
-            path = Application.persistentDataPath + filename;
-#endif
-        }
+//            path = Application.persistentDataPath + filename;
+//#endif
+//        }
 
-        using (FileStream fs = new FileStream(path, FileMode.Create))
-        {
-            using (BinaryWriter bw = new BinaryWriter(fs)) //true=追記 false=上書き
-            {
-                int size = Marshal.SizeOf(rankInfo);
-                System.IntPtr buffer = Marshal.AllocHGlobal(size);
+//        using (FileStream fs = new FileStream(path, FileMode.Create))
+//        {
+//            using (BinaryWriter bw = new BinaryWriter(fs)) //true=追記 false=上書き
+//            {
+//                int size = Marshal.SizeOf(rankInfo);
+//                System.IntPtr buffer = Marshal.AllocHGlobal(size);
 
-                try
-                {
-                    Marshal.StructureToPtr(rankInfo, buffer, false);
-                    byte[] bytes = new byte[size];
-                    Marshal.Copy(buffer, bytes, 0, size);
+//                try
+//                {
+//                    Marshal.StructureToPtr(rankInfo, buffer, false);
+//                    byte[] bytes = new byte[size];
+//                    Marshal.Copy(buffer, bytes, 0, size);
 
-                    bw.Write(bytes);
-                }
-                finally
-                {
-                    Marshal.FreeHGlobal(buffer);
-                }
+//                    bw.Write(bytes);
+//                }
+//                finally
+//                {
+//                    Marshal.FreeHGlobal(buffer);
+//                }
 
-                //for (int i = 0; i < rankInfo.Length; i++)
-                //{
-                //    bw.Write(rankInfo[i].rank);
-                //    bw.Write(rankInfo[i].name);
-                //    bw.Write(rankInfo[i].score);
-                //}
-            }
-        }
-    }
+//                //for (int i = 0; i < rankInfo.Length; i++)
+//                //{
+//                //    bw.Write(rankInfo[i].rank);
+//                //    bw.Write(rankInfo[i].name);
+//                //    bw.Write(rankInfo[i].score);
+//                //}
+//            }
+//        }
+//    }
 }

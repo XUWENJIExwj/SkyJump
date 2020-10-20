@@ -37,7 +37,7 @@ public class Flick : MonoBehaviour
             objWithFlick.playerState == ObjectWithFlick.PlayerState.PLAYER_STATE_TAP ||
             continueJump) && !objWithFlick.GetIfGameOver())
         {
-            if (Application.isEditor)
+            if (Application.isEditor || Application.platform == RuntimePlatform.WindowsPlayer)
             {
 
                 if (Input.GetMouseButtonDown(0))

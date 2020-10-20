@@ -33,7 +33,7 @@ public class SkinManager : MonoBehaviour
             moveState = MoveState.MOVE_STATE_MOVING_UP;
             for (int i = 0; i < skinIcon.Length; i++)
             {
-                skinIcon[i].DOMoveY(skinIcon[i].position.y + (i + 1) * 160, 1).OnComplete(() => { moveState = MoveState.MOVE_STATE_STOP_UP; });
+                skinIcon[i].DOMoveY(skinIcon[i].position.y + (i + 1) * 160, 0.5f).OnComplete(() => { moveState = MoveState.MOVE_STATE_STOP_UP; });
             }
             audioManager.PlaySE(AudioManager.SE.SE_TITLE, 1, 0.5f);
         }
@@ -42,7 +42,7 @@ public class SkinManager : MonoBehaviour
             moveState = MoveState.MOVE_STATE_MOVING_DOWN;
             for (int i = 0; i < skinIcon.Length; i++)
             {
-                skinIcon[i].DOMoveY(skinIcon[i].position.y - (i + 1) * 160, 1).OnComplete(() => { moveState = MoveState.MOVE_STATE_STOP_DOWN; });
+                skinIcon[i].DOMoveY(skinIcon[i].position.y - (i + 1) * 160, 0.5f).OnComplete(() => { moveState = MoveState.MOVE_STATE_STOP_DOWN; });
             }
             audioManager.PlaySE(AudioManager.SE.SE_TITLE, 1, 0.5f);
         }

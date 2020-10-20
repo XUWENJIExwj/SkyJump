@@ -142,6 +142,23 @@ public class ResultManager : MonoBehaviour
         rank.SetNewRankName(inputer.textComponent.text, idx);
 
         checkStringByte.MakeCharacterToLimit(rank.GetRankInfo(idx).name);
+
+        bool all_blank = true;
+
+        for (int i = 0; i < inputer.textComponent.text.Length; i++)
+        {
+            if (inputer.textComponent.text[i] != 0x20)
+            {
+                all_blank = false;
+                break;
+            }
+        }
+
+        if(all_blank)
+        {
+            rank.SetNewRankName("Player", idx);
+        }
+
         rank.SaveRank(idx);
         //rank.SaveRankBinary();
 

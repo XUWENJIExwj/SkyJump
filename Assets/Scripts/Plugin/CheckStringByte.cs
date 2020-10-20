@@ -60,4 +60,14 @@ public class CheckStringByte : MonoBehaviour
     {
         return !((c >= 0x0 && c < 0x81) || (c == 0xf8f0) || (c >= 0xff61 && c < 0xffa0) || (c >= 0xf8f1 && c < 0xf8f4));
     }
+
+    public bool IfHalfWidthSpace(char c)
+    {
+        return !IfFullWidthCharacter(c) && (c == 0x20);
+    }
+
+    //public bool IfFullWidthSpace(char c)
+    //{
+    //    return IfFullWidthCharacter(c) && (c == 0x20);
+    //}
 }
