@@ -43,12 +43,7 @@ public class ResultManager : MonoBehaviour
 
         resultSpriteRenderer = GetComponent<SpriteRenderer>();
 
-        resultSpriteRenderer.size = new Vector2(6.4f * screenHeight / 11.36f + 2.0f, screenHeight);
-
-#if UNITY_ANDROID
-
         resultSpriteRenderer.size = new Vector2(6.4f * screenHeight / 11.36f, screenHeight);
-#endif
 
         RectTransform frame = scoreFrame.GetComponent<RectTransform>();
 

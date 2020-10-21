@@ -39,12 +39,7 @@ public class TitleManager : MonoBehaviour
 
         titleSpriteRenderer = GetComponent<SpriteRenderer>();
 
-        titleSpriteRenderer.size = new Vector2(6.4f * screenHeight / 11.36f + 2.0f, screenHeight);
-#if UNITY_ANDROID
-
         titleSpriteRenderer.size = new Vector2(6.4f * screenHeight / 11.36f, screenHeight);
-#endif
-
 
         // AudioManagerへのアタッチ
         if (!GameObject.Find("AudioManager"))
