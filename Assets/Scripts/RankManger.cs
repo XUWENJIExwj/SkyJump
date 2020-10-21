@@ -28,7 +28,13 @@ public class RankManger : MonoBehaviour
         screenHeight = (float)Screen.height / 100;
 
         rankSpriteRenderer = GetComponent<SpriteRenderer>();
+
+        rankSpriteRenderer.size = new Vector2(6.4f * screenHeight / 11.36f + 2.0f, screenHeight);
+
+#if UNITY_ANDROID
+
         rankSpriteRenderer.size = new Vector2(6.4f * screenHeight / 11.36f, screenHeight);
+#endif
 
         // AudioManagerへのアタッチ
         if (!GameObject.Find("AudioManager"))
@@ -54,8 +60,8 @@ public class RankManger : MonoBehaviour
             }
             else
             {
-                nameText[i].text = "- - - - - - -";
-                scoreText[i].text = "- - - - - -";
+                nameText[i].text = "---------";
+                scoreText[i].text = "-----";
             }
         }
 
